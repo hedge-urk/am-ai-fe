@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Button, TextField, Typography, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import DataListener from '../components/DataListener';
 
 interface FormData {
   entityName: string;
@@ -46,8 +45,7 @@ const Form: React.FC = () => {
         throw new Error('Failed to submit form');
       }
 
-      // Navigate to the listening page with the entity name
-      navigate('/listen', { state: { entityName: formData.entityName } });
+      navigate('/listen');
     } catch (error) {
       console.error('Error submitting form:', error);
       setErrors({ entityName: 'Failed to submit form. Please try again.' });
@@ -62,7 +60,6 @@ const Form: React.FC = () => {
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
     if (errors[name as keyof FormData]) {
       setErrors(prev => ({
         ...prev,
@@ -83,7 +80,7 @@ const Form: React.FC = () => {
       <Paper elevation={3} sx={{ 
         p: 4, 
         width: '100%', 
-        maxWidth: '1200px',
+        maxWidth: '600px',
         backgroundColor: 'background.paper'
       }}>
         <Typography variant="h4" component="h1" gutterBottom align="center" sx={{ mb: 4 }}>
