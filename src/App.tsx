@@ -1,10 +1,19 @@
-import { EntityForm } from './components/EntityForm'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Form from './pages/Form';
+import DataListener from './components/DataListener';
+import './App.css';
 
 function App() {
   return (
-    <EntityForm />
-  )
+    <Router>
+      <div className="app-container">
+        <Routes>
+          <Route path="/" element={<Form />} />
+          <Route path="/listen" element={<DataListener />} />
+        </Routes>
+      </div>
+    </Router>
+  );
 }
 
-export default App
+export default App;
