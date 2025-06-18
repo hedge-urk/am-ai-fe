@@ -1,0 +1,147 @@
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px 0;
+  background-color: #f5f7fa;
+  width: 100%;
+}
+
+.entity-form {
+  width: 100%;
+  max-width: 1200px;
+  background: white;
+  padding: 4rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+.form-header h2 {
+  color: #1a1a1a;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.form-subtitle {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.form-content {
+  margin-bottom: 3rem;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.form-group {
+  margin-bottom: 1.75rem;
+}
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  color: #374151;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.label-text {
+  margin-right: 0.25rem;
+}
+
+.required-mark {
+  color: #dc2626;
+  font-size: 1.1rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background-color: #ffffff;
+  color: #1a1a1a;
+}
+
+.form-group input:hover {
+  border-color: #d1d5db;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background-color: #ffffff;
+}
+
+.form-group input::placeholder {
+  color: #9ca3af;
+}
+
+.form-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.submit-button {
+  background-color: #3b82f6;
+  color: white;
+  padding: 0.875rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 200px;
+}
+
+.submit-button:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+.submit-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.submit-button:active {
+  transform: translateY(0);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1240px) {
+  .entity-form {
+    padding: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .entity-form {
+    padding: 2rem;
+  }
+
+  .form-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .submit-button {
+    width: 100%;
+  }
+} 

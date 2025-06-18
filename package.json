@@ -2,6 +2,7 @@
   "name": "am-ai-fe",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://hedge-urk.github.io/am-ai-fe/",
   "type": "module",
   "scripts": {
     "dev": "vite",
