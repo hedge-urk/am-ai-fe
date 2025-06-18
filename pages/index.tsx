@@ -74,25 +74,27 @@ export default function Home() {
   return (
     <Box
       sx={{
-        minHeight: '95vh',
-        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+        minHeight: '100vh',
+        background: '#fff',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        fontFamily: 'Raleway, Arial, sans-serif',
       }}
     >
       <Container maxWidth="sm">
         <Paper
-          elevation={6}
+          elevation={1}
           sx={{
             p: 5,
             borderRadius: 4,
-            boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
-            background: 'rgba(255,255,255,0.85)',
+            boxShadow: '0 2px 8px 0 rgba(0,0,0,0.06)',
+            background: '#fff',
+            border: '1px solid #222',
           }}
         >
-          <Typography variant="h4" component="h2" align="center" sx={{ mb: 3, fontWeight: 700, color: '#222' }}>
-            Entity Screening
+          <Typography variant="h4" component="h2" align="center" sx={{ mb: 3, fontWeight: 700, color: '#111', fontFamily: 'Raleway, Arial, sans-serif' }}>
+            AMS AI Solution
           </Typography>
           <form onSubmit={handleSubmit}>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
@@ -108,10 +110,12 @@ export default function Home() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <PersonIcon />
+                      <PersonIcon sx={{ color: '#111' }} />
                     </InputAdornment>
                   ),
+                  style: { color: '#111', fontFamily: 'Raleway, Arial, sans-serif' },
                 }}
+                InputLabelProps={{ style: { color: '#111', fontFamily: 'Raleway, Arial, sans-serif' } }}
               />
               <TextField
                 fullWidth
@@ -120,13 +124,14 @@ export default function Home() {
                 type="date"
                 value={formData.dateOfBirth}
                 onChange={handleChange}
-                InputLabelProps={{ shrink: true }}
+                InputLabelProps={{ shrink: true, style: { color: '#111', fontFamily: 'Raleway, Arial, sans-serif' } }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <CalendarTodayIcon />
+                      <CalendarTodayIcon sx={{ color: '#111' }} />
                     </InputAdornment>
                   ),
+                  style: { color: '#111', fontFamily: 'Raleway, Arial, sans-serif' },
                 }}
               />
               <TextField
@@ -138,27 +143,33 @@ export default function Home() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <PublicIcon />
+                      <PublicIcon sx={{ color: '#111' }} />
                     </InputAdornment>
                   ),
+                  style: { color: '#111', fontFamily: 'Raleway, Arial, sans-serif' },
                 }}
+                InputLabelProps={{ style: { color: '#111', fontFamily: 'Raleway, Arial, sans-serif' } }}
               />
               <Button
                 type="submit"
-                variant="contained"
+                variant="outlined"
                 size="large"
                 disabled={isSubmitting}
                 sx={{
                   mt: 2,
                   py: 1.5,
                   fontSize: '1.1rem',
-                  background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
-                  color: '#fff',
                   fontWeight: 600,
-                  boxShadow: '0 4px 20px 0 rgba(118,75,162,0.2)',
+                  borderRadius: 2,
+                  borderColor: '#222',
+                  color: '#111',
+                  background: '#fff',
                   '&:hover': {
-                    background: 'linear-gradient(90deg, #764ba2 0%, #667eea 100%)',
+                    background: '#111',
+                    color: '#fff',
+                    borderColor: '#111',
                   },
+                  fontFamily: 'Raleway, Arial, sans-serif',
                 }}
               >
                 {isSubmitting ? 'Submitting...' : 'Submit'}
