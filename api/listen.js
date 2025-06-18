@@ -38,7 +38,10 @@ export default async function handler(req, res) {
                 return;
             }
 
-            res.status(200).json({ success: true, data: receivedData });
+            // Send the data and then clear it
+            const dataToSend = receivedData;
+            receivedData = null;
+            res.status(200).json({ success: true, data: dataToSend });
         } catch (error) {
             console.error('Error processing GET request:', error);
             res.status(500).json({ success: false, error: 'Internal server error' });
