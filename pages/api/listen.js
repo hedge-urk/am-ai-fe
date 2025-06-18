@@ -1,5 +1,23 @@
+import { IncomingForm } from 'formidable';
+
 // Store received data in memory
 let receivedData = null;
+
+export const config = {
+    api: {
+        bodyParser: false
+    }
+};
+
+const parseForm = async (req) => {
+    return new Promise((resolve, reject) => {
+        const form = new IncomingForm();
+        form.parse(req, (err, fields, files) => {
+            if (err) return reject(err);
+            resolve({ fields, files });
+        });
+    });
+};
 
 export default async function handler(req, res) {
     // Set CORS headers
@@ -19,9 +37,12 @@ export default async function handler(req, res) {
 
     if (req.method === 'POST') {
         try {
+            const { fields } = await parseForm(req);
+            const htmlContent = fields.html || '';
+
             // Store the received data
             receivedData = {
-                ...req.body,
+                html: htmlContent,
                 timestamp: new Date().toISOString()
             };
 
