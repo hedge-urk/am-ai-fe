@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { Box, Button, TextField, Typography, Paper } from '@mui/material';
+import { Box, Button, TextField, Typography, Paper, Container, InputAdornment } from '@mui/material';
+import PersonIcon from '@mui/icons-material/Person';
+import PublicIcon from '@mui/icons-material/Public';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { useRouter } from 'next/router';
 
 interface FormData {
@@ -69,98 +72,101 @@ export default function Home() {
   };
 
   return (
-    <Box sx={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      alignItems: 'center', 
-      minHeight: '100vh',
-      py: 4,
-      px: 2
-    }}>
-      <Paper elevation={3} sx={{ 
-        p: 4, 
-        width: '100%', 
-        maxWidth: '600px',
-        backgroundColor: 'background.paper'
-      }}>
-        <Typography variant="h4" component="h1" gutterBottom align="center" sx={{ mb: 4 }}>
-          Entity Screening Form
-        </Typography>
-        
-        <form onSubmit={handleSubmit}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-            <TextField
-              required
-              fullWidth
-              label="Entity Name"
-              name="entityName"
-              value={formData.entityName}
-              onChange={handleChange}
-              error={!!errors.entityName}
-              helperText={errors.entityName}
-              sx={{ 
-                '& .MuiInputBase-input': { 
-                  color: 'text.primary',
-                  fontSize: '1.1rem'
-                },
-                '& .MuiInputLabel-root': {
-                  fontSize: '1.1rem'
-                }
-              }}
-            />
-            
-            <TextField
-              fullWidth
-              label="Date of Birth"
-              name="dateOfBirth"
-              type="date"
-              value={formData.dateOfBirth}
-              onChange={handleChange}
-              InputLabelProps={{ shrink: true }}
-              sx={{ 
-                '& .MuiInputBase-input': { 
-                  color: 'text.primary',
-                  fontSize: '1.1rem'
-                },
-                '& .MuiInputLabel-root': {
-                  fontSize: '1.1rem'
-                }
-              }}
-            />
-            
-            <TextField
-              fullWidth
-              label="Country"
-              name="country"
-              value={formData.country}
-              onChange={handleChange}
-              sx={{ 
-                '& .MuiInputBase-input': { 
-                  color: 'text.primary',
-                  fontSize: '1.1rem'
-                },
-                '& .MuiInputLabel-root': {
-                  fontSize: '1.1rem'
-                }
-              }}
-            />
-
-            <Button
-              type="submit"
-              variant="contained"
-              size="large"
-              disabled={isSubmitting}
-              sx={{ 
-                mt: 2,
-                py: 1.5,
-                fontSize: '1.1rem'
-              }}
-            >
-              {isSubmitting ? 'Submitting...' : 'Submit'}
-            </Button>
-          </Box>
-        </form>
-      </Paper>
+    <Box
+      sx={{
+        minHeight: '95vh',
+        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Container maxWidth="sm">
+        <Paper
+          elevation={6}
+          sx={{
+            p: 5,
+            borderRadius: 4,
+            boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+            background: 'rgba(255,255,255,0.85)',
+          }}
+        >
+          <Typography variant="h4" component="h2" align="center" sx={{ mb: 3, fontWeight: 700, color: '#222' }}>
+            Entity Screening
+          </Typography>
+          <form onSubmit={handleSubmit}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <TextField
+                required
+                fullWidth
+                label="Entity Name"
+                name="entityName"
+                value={formData.entityName}
+                onChange={handleChange}
+                error={!!errors.entityName}
+                helperText={errors.entityName}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PersonIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <TextField
+                fullWidth
+                label="Date of Birth"
+                name="dateOfBirth"
+                type="date"
+                value={formData.dateOfBirth}
+                onChange={handleChange}
+                InputLabelProps={{ shrink: true }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <CalendarTodayIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <TextField
+                fullWidth
+                label="Country"
+                name="country"
+                value={formData.country}
+                onChange={handleChange}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PublicIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                size="large"
+                disabled={isSubmitting}
+                sx={{
+                  mt: 2,
+                  py: 1.5,
+                  fontSize: '1.1rem',
+                  background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+                  color: '#fff',
+                  fontWeight: 600,
+                  boxShadow: '0 4px 20px 0 rgba(118,75,162,0.2)',
+                  '&:hover': {
+                    background: 'linear-gradient(90deg, #764ba2 0%, #667eea 100%)',
+                  },
+                }}
+              >
+                {isSubmitting ? 'Submitting...' : 'Submit'}
+              </Button>
+            </Box>
+          </form>
+        </Paper>
+      </Container>
     </Box>
   );
 } 

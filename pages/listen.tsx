@@ -20,8 +20,8 @@ export default function Listen() {
         const result = await response.json();
         
         if (result.data) {
-          console.log('Received data:', result.data);
           setData(result.data);
+          clearInterval(pollInterval);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
