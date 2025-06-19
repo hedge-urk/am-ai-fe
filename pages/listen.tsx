@@ -22,6 +22,7 @@ export default function Listen() {
         }
         const result = await response.json();
 
+        console.log(result);
         if (result.data) {
           setData(result.data);
           clearInterval(pollInterval);
