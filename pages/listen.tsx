@@ -45,7 +45,9 @@ export default function Listen() {
     );
   }
 
-  if (data && Array.isArray(data.html)) {
+  if (data && data.html) {
+    // Ensure html is always an array for rendering
+    const htmlArray = Array.isArray(data.html) ? data.html : [data.html];
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4, px: 2, fontFamily: 'Raleway, Arial, sans-serif', background: '#fff', minHeight: '100vh' }}>
         {/* Black/white header */}
@@ -149,7 +151,7 @@ export default function Listen() {
               margin-bottom: 12px;
             }
           `}</style>
-          {data.html.flatMap((htmlString, idx) => {
+          {htmlArray.flatMap((htmlString, idx) => {
             // Split by all <h3>...</h3> and keep the heading with its content
             const sections = [];
             const regex = /<h3>(.*?)<\/h3>([\s\S]*?)(?=<h3>|$)/gi;
@@ -168,7 +170,7 @@ export default function Listen() {
                   </Typography>
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: section.content.replace(/<table/g, '<table class=\"modern-table\"'),
+                      __html: section.content.replace(/<table/g, '<table class="modern-table"'),
                     }}
                   />
                 </CardContent>
