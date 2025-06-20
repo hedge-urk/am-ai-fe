@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, LinearProgress, Card, CardContent, Button } from '@mui/material';
+import { Box, Typography, LinearProgress, Card, CardContent, Button, Divider } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useRouter } from 'next/router';
 
@@ -54,7 +54,7 @@ export default function Listen() {
         <Box
           sx={{
             width: '100%',
-            maxWidth: '90%',
+            maxWidth: '95%',
             mb: 3,
             py: 2,
             px: 3,
@@ -168,6 +168,7 @@ export default function Listen() {
                   <Typography variant="h5" sx={{ mb: 2, fontWeight: 700, color: '#222', fontFamily: 'Raleway, Arial, sans-serif' }}>
                     {section.heading}
                   </Typography>
+                  <Divider sx={{ mb: 2, borderColor: '#222' }} />
                   <div
                     dangerouslySetInnerHTML={{
                       __html: section.content.replace(/<table/g, '<table class="modern-table"'),
