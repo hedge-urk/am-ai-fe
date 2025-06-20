@@ -112,6 +112,8 @@ export default function Listen() {
         }
       })
       .filter((item): item is ScreeningResult => item !== null);
+
+    const modelProviders = ['Llama3', 'OpenAI', 'DeepSeek'];
       
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4, px: 2, fontFamily: 'Raleway, Arial, sans-serif', background: '#fff', minHeight: '100vh' }}>
@@ -166,7 +168,7 @@ export default function Listen() {
             <Card key={idx} sx={{ mb: 3, borderRadius: 3, boxShadow: 1, background: '#fff', border: '1px solid #222' }}>
               <CardContent>
                 <Typography variant="h5" sx={{ mb: 2, fontWeight: 700, color: '#222', fontFamily: 'Raleway, Arial, sans-serif' }}>
-                  Report for: {result.output.entity_summary.name}
+                  {modelProviders[idx] ? `${modelProviders[idx]} Report for: ` : 'Report for: '}{result.output.entity_summary.name}
                 </Typography>
                 <Divider sx={{ mb: 2, borderColor: '#222' }} />
 
