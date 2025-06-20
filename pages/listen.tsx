@@ -113,7 +113,7 @@ export default function Listen() {
       })
       .filter((item): item is ScreeningResult => item !== null);
 
-    const modelProviders = ['Llama3', 'OpenAI', 'DeepSeek'];
+    const modelProviders = ['OpenAI', 'DeepSeek', "LLAMA"];
       
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4, px: 2, fontFamily: 'Raleway, Arial, sans-serif', background: '#fff', minHeight: '100vh' }}>
@@ -175,6 +175,19 @@ export default function Listen() {
                 {renderObjectDetails(result.output.entity_summary, 'Entity Summary')}
 
                 <Divider sx={{ my: 2 }} />
+                
+                {renderObjectDetails({
+                    risk_score: result.output.risk_score,
+                    confidence_level: result.output.confidence_level,
+                    needs_review: result.output.needs_review,
+                    escalation_level: result.output.escalation_level
+                }, 'Risk Assessment')}
+                
+                <Divider sx={{ my: 2 }} />
+                
+                {renderObjectDetails(result.output.search_methodology, 'Search Methodology')}
+
+                <Divider sx={{ my: 2 }} />
 
                 <Box sx={{ mb: 3 }}>
                   <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>Matches ({result.output.matches.length})</Typography>
@@ -195,19 +208,6 @@ export default function Listen() {
                     </Card>
                   ))}
                 </Box>
-                
-                <Divider sx={{ my: 2 }} />
-                
-                {renderObjectDetails({
-                    risk_score: result.output.risk_score,
-                    confidence_level: result.output.confidence_level,
-                    needs_review: result.output.needs_review,
-                    escalation_level: result.output.escalation_level
-                }, 'Risk Assessment')}
-                
-                <Divider sx={{ my: 2 }} />
-                
-                {renderObjectDetails(result.output.search_methodology, 'Search Methodology')}
 
               </CardContent>
             </Card>
