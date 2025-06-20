@@ -8,6 +8,55 @@ interface ReceivedData {
   timestamp: string;
 }
 
+// Function to transform table structure
+const transformTableStructure = (htmlContent: string): string => {
+  // Use regex to find and transform table structures
+  return htmlContent.replace(
+    /<table[^>]*>([\s\S]*?)<\/table>/gi,
+    (match, tableContent) => {
+      // Check if this table has the structure we want to transform
+      const rowMatches = tableContent.match(/<tr[^>]*>([\s\S]*?)<\/tr>/gi);
+      
+      if (rowMatches && rowMatches.length > 0) {
+        // Check if first row has 2 columns (entity summary structure)
+        const firstRow = rowMatches[0];
+        const cellMatches = firstRow.match(/<(td|th)[^>]*>([\s\S]*?)<\/(td|th)>/gi);
+        
+        if (cellMatches && cellMatches.length === 2) {
+          // Transform each row into heading + content structure
+          let transformedContent = '';
+          
+          rowMatches.forEach((row) => {
+            const cells = row.match(/<(td|th)[^>]*>([\s\S]*?)<\/(td|th)>/gi);
+            
+            if (cells && cells.length === 2) {
+              // Extract content from cells (remove the td/th tags)
+              const leftContent = cells[0].replace(/<(td|th)[^>]*>([\s\S]*?)<\/(td|th)>/i, '$2').trim();
+              const rightContent = cells[1].replace(/<(td|th)[^>]*>([\s\S]*?)<\/(td|th)>/i, '$2').trim();
+              
+              if (leftContent && rightContent) {
+                transformedContent += `
+                  <h4 style="margin: 20px 0 10px 0; font-weight: 600; color: #222; font-family: Raleway, Arial, sans-serif;">
+                    ${leftContent}
+                  </h4>
+                  <div style="margin-bottom: 20px; padding-left: 10px;">
+                    ${rightContent}
+                  </div>
+                `;
+              }
+            }
+          });
+          
+          return transformedContent;
+        }
+      }
+      
+      // If not the structure we want to transform, return original with modern-table class
+      return match.replace(/<table/g, '<table class="modern-table"');
+    }
+  );
+};
+
 export default function Listen() {
   const [data, setData] = useState<ReceivedData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -143,7 +192,7 @@ export default function Listen() {
               padding: 6px 10px;
             }
             .modern-table ul {
-              padding-left: 18px;
+              padding-left: 0 !important;
               margin: 0;
             }
             .modern-table li {
@@ -170,7 +219,7 @@ export default function Listen() {
                   </Typography>
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: section.content.replace(/<table/g, '<table class="modern-table"'),
+                      __html: transformTableStructure(section.content),
                     }}
                   />
                 </CardContent>
