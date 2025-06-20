@@ -164,54 +164,71 @@ export default function Listen() {
 
         {/* Results */}
         <Box sx={{ width: '100%', maxWidth: '95%', mt: 2 }}>
-          {results.map((result, idx) => (
-            <Card key={idx} sx={{ mb: 3, borderRadius: 3, boxShadow: 1, background: '#fff', border: '1px solid #222' }}>
-              <CardContent>
-                <Typography variant="h5" sx={{ mb: 2, fontWeight: 700, color: '#222', fontFamily: 'Raleway, Arial, sans-serif' }}>
-                  {modelProviders[idx] ? `${modelProviders[idx]} Report for: ` : 'Report for: '}{result.output.entity_summary.name}
-                </Typography>
-                <Divider sx={{ mb: 2, borderColor: '#222' }} />
+          {results.map((result, idx) => {
+            // Add defensive checks for data structure
+            if (!result?.output) {
+              console.warn('Missing output in result:', result);
+              return null;
+            }
+            
+            const { output } = result;
+            const entityName = output.entity_summary?.name || 'Unknown Entity';
+            
+            return (
+              <Card key={idx} sx={{ mb: 3, borderRadius: 3, boxShadow: 1, background: '#fff', border: '1px solid #222' }}>
+                <CardContent>
+                  <Typography variant="h5" sx={{ mb: 2, fontWeight: 700, color: '#222', fontFamily: 'Raleway, Arial, sans-serif' }}>
+                    {modelProviders[idx] ? `${modelProviders[idx]} Report for: ` : 'Report for: '}{entityName}
+                  </Typography>
+                  <Divider sx={{ mb: 2, borderColor: '#222' }} />
 
-                {renderObjectDetails(result.output.entity_summary, 'Entity Summary')}
+                  {output.entity_summary && renderObjectDetails(output.entity_summary, 'Entity Summary')}
 
-                <Divider sx={{ my: 2 }} />
-                
-                {renderObjectDetails({
-                    risk_score: result.output.risk_score,
-                    confidence_level: result.output.confidence_level,
-                    needs_review: result.output.needs_review,
-                    escalation_level: result.output.escalation_level
-                }, 'Risk Assessment')}
-                
-                <Divider sx={{ my: 2 }} />
-                
-                {renderObjectDetails(result.output.search_methodology, 'Search Methodology')}
+                  <Divider sx={{ my: 2 }} />
+                  
+                  {renderObjectDetails({
+                      risk_score: output.risk_score || 'N/A',
+                      confidence_level: output.confidence_level || 'N/A',
+                      needs_review: output.needs_review || 'N/A',
+                      escalation_level: output.escalation_level || 'N/A'
+                  }, 'Risk Assessment')}
+                  
+                  <Divider sx={{ my: 2 }} />
+                  
+                  {output.search_methodology && renderObjectDetails(output.search_methodology, 'Search Methodology')}
 
-                <Divider sx={{ my: 2 }} />
+                  <Divider sx={{ my: 2 }} />
 
-                <Box sx={{ mb: 3 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>Matches ({result.output.matches.length})</Typography>
-                  {result.output.matches.map((match, matchIdx) => (
-                    <Card key={matchIdx} variant="outlined" sx={{ mb: 2, background: '#fafafa' }}>
-                      <CardContent>
-                        {Object.entries(match).map(([key, value]) => (
-                           <Typography key={key} variant="body2" sx={{ mb: 0.5 }}>
-                            <strong style={{ textTransform: 'capitalize' }}>{key.replace(/_/g, ' ')}:</strong>{' '}
-                            {key === 'source_link' ? (
-                              <Link href={String(value)} target="_blank" rel="noopener noreferrer">{value}</Link>
-                            ) : (
-                              Array.isArray(value) ? value.join(', ') : String(value)
-                            )}
-                          </Typography>
-                        ))}
-                      </CardContent>
-                    </Card>
-                  ))}
-                </Box>
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>Matches ({output.matches?.length || 0})</Typography>
+                    {output.matches && output.matches.length > 0 ? (
+                      output.matches.map((match, matchIdx) => (
+                        <Card key={matchIdx} variant="outlined" sx={{ mb: 2, background: '#fafafa' }}>
+                          <CardContent>
+                            {Object.entries(match).map(([key, value]) => (
+                               <Typography key={key} variant="body2" sx={{ mb: 0.5 }}>
+                                <strong style={{ textTransform: 'capitalize' }}>{key.replace(/_/g, ' ')}:</strong>{' '}
+                                {key === 'source_link' ? (
+                                  <Link href={String(value)} target="_blank" rel="noopener noreferrer">{value}</Link>
+                                ) : (
+                                  Array.isArray(value) ? value.join(', ') : String(value)
+                                )}
+                              </Typography>
+                            ))}
+                          </CardContent>
+                        </Card>
+                      ))
+                    ) : (
+                      <Typography variant="body2" sx={{ color: '#666', fontStyle: 'italic' }}>
+                        No matches found
+                      </Typography>
+                    )}
+                  </Box>
 
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            );
+          })}
         </Box>
       </Box>
     );
