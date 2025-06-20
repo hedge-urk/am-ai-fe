@@ -1,12 +1,67 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, LinearProgress, Card, CardContent, Button, Divider } from '@mui/material';
+import { Box, Typography, LinearProgress, Card, CardContent, Button, Divider, Link } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useRouter } from 'next/router';
 
+// --- New Interfaces for the JSON data structure ---
+
+interface EntitySummary {
+  name: string;
+  identifiers_used: string | string[];
+  search_date: string;
+  summary: string;
+}
+
+interface Match {
+  risk_type: string;
+  source: string;
+  source_tier: string | number;
+  severity: string;
+  date: string;
+  summary: string;
+  source_link: string;
+  entity_confirmation: string;
+}
+
+interface SearchMethodology {
+  sources_searched: string | string[];
+  date_range: string;
+  search_terms_used: string | string[];
+}
+
+interface ScreeningOutput {
+  entity_summary: EntitySummary;
+  matches: Match[];
+  risk_score: string | number;
+  confidence_level: string | number;
+  needs_review: boolean | string;
+  escalation_level: string;
+  search_methodology: SearchMethodology;
+}
+
+interface ScreeningResult {
+  output: ScreeningOutput;
+}
+
 interface ReceivedData {
-  html: string[];
+  html: string; // This is now a JSON-lines string
   timestamp: string;
 }
+
+// --- Helper function to render object details ---
+
+const renderObjectDetails = (obj: Record<string, any>, title: string) => (
+  <Box sx={{ mb: 3 }}>
+    <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>{title}</Typography>
+    {Object.entries(obj).map(([key, value]) => (
+      <Typography key={key} variant="body2" sx={{ mb: 0.5 }}>
+        <strong style={{ textTransform: 'capitalize' }}>{key.replace(/_/g, ' ')}:</strong>{' '}
+        {Array.isArray(value) ? value.join(', ') : String(value)}
+      </Typography>
+    ))}
+  </Box>
+);
+
 
 export default function Listen() {
   const [data, setData] = useState<ReceivedData | null>(null);
@@ -22,7 +77,6 @@ export default function Listen() {
         }
         const result = await response.json();
 
-        console.log(result);
         if (result.data) {
           setData(result.data);
           clearInterval(pollInterval);
@@ -46,11 +100,22 @@ export default function Listen() {
   }
 
   if (data && data.html) {
-    // Ensure html is always an array for rendering
-    const htmlArray = Array.isArray(data.html) ? data.html : [data.html];
+    const results: ScreeningResult[] = data.html
+      .trim()
+      .split('\n')
+      .map(line => {
+        try {
+          return JSON.parse(line);
+        } catch (e) {
+          console.error('Failed to parse JSON line:', line, e);
+          return null;
+        }
+      })
+      .filter((item): item is ScreeningResult => item !== null);
+      
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4, px: 2, fontFamily: 'Raleway, Arial, sans-serif', background: '#fff', minHeight: '100vh' }}>
-        {/* Black/white header */}
+        {/* Header */}
         <Box
           sx={{
             width: '100%',
@@ -94,90 +159,57 @@ export default function Listen() {
             Search Again
           </Button>
         </Box>
-        <Box sx={{ width: '100%', mt: 2 }}>
-          {/* Custom table and card styles */}
-          <style>{`
-            body, .modern-table, .modern-table * {
-              font-family: 'Raleway', Arial, sans-serif !important;
-            }
-            .modern-table {
-              border-collapse: separate !important;
-              border-spacing: 0;
-              width: 100%;
-              background: #fff;
-              border-radius: 8px;
-              overflow: hidden;
-              box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-              margin-bottom: 24px;
-              border: 0;
-            }
-            .modern-table th, .modern-table td {
-              border: 0;
-              padding: 8px 12px;
-              font-size: 1rem;
-              color: #111;
-              background: #fff;
-            }
-            .modern-table th {
-              background: #f5f5f5;
-              font-weight: 600;
-              color: #111;
-            }
-            .modern-table tr:nth-of-type(even) td {
-              background: #fafafa;
-            }
-            /* Remove borders from nested tables and make them cards */
-            .modern-table table {
-              border: 1px solid #bbb !important;
-              box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-              border-radius: 8px;
-              margin: 12px 0;
-              background: #fff;
-              width: 98%;
-            }
-            .modern-table table th, .modern-table table td {
-              border: 1px solid #eee !important;
-              background: #fff !important;
-              font-size: 0.98rem;
-              color: #222;
-              padding: 6px 10px;
-            }
-            .modern-table ul {
-              padding-left: 0 !important;
-              margin: 0;
-            }
-            .modern-table li {
-              list-style: none;
-              margin-bottom: 12px;
-            }
-          `}</style>
-          {htmlArray.flatMap((htmlString, idx) => {
-            // Split by all <h3>...</h3> and keep the heading with its content
-            const sections = [];
-            const regex = /<h3>(.*?)<\/h3>([\s\S]*?)(?=<h3>|$)/gi;
-            let match;
-            while ((match = regex.exec(htmlString)) !== null) {
-              sections.push({
-                heading: match[1],
-                content: match[2],
-              });
-            }
-            return sections.map((section, sectionIdx) => (
-              <Card key={`${idx}-${sectionIdx}`} sx={{ mb: 3, borderRadius: 3, boxShadow: 1, background: '#fff', border: '1px solid #222' }}>
-                <CardContent>
-                  <Typography variant="h5" sx={{ mb: 2, fontWeight: 700, color: '#222', fontFamily: 'Raleway, Arial, sans-serif' }}>
-                    {section.heading}
-                  </Typography>
-                  <Divider sx={{ mb: 2, borderColor: '#222' }} />
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: section.content.replace(/<table/g, '<table class="modern-table"'),
-                    }}
-                  />
-                </CardContent>
-              </Card>
-            ));
-          })}
+
+        {/* Results */}
+        <Box sx={{ width: '100%', maxWidth: '95%', mt: 2 }}>
+          {results.map((result, idx) => (
+            <Card key={idx} sx={{ mb: 3, borderRadius: 3, boxShadow: 1, background: '#fff', border: '1px solid #222' }}>
+              <CardContent>
+                <Typography variant="h5" sx={{ mb: 2, fontWeight: 700, color: '#222', fontFamily: 'Raleway, Arial, sans-serif' }}>
+                  Report for: {result.output.entity_summary.name}
+                </Typography>
+                <Divider sx={{ mb: 2, borderColor: '#222' }} />
+
+                {renderObjectDetails(result.output.entity_summary, 'Entity Summary')}
+
+                <Divider sx={{ my: 2 }} />
+
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>Matches ({result.output.matches.length})</Typography>
+                  {result.output.matches.map((match, matchIdx) => (
+                    <Card key={matchIdx} variant="outlined" sx={{ mb: 2, background: '#fafafa' }}>
+                      <CardContent>
+                        {Object.entries(match).map(([key, value]) => (
+                           <Typography key={key} variant="body2" sx={{ mb: 0.5 }}>
+                            <strong style={{ textTransform: 'capitalize' }}>{key.replace(/_/g, ' ')}:</strong>{' '}
+                            {key === 'source_link' ? (
+                              <Link href={String(value)} target="_blank" rel="noopener noreferrer">{value}</Link>
+                            ) : (
+                              Array.isArray(value) ? value.join(', ') : String(value)
+                            )}
+                          </Typography>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </Box>
+                
+                <Divider sx={{ my: 2 }} />
+                
+                {renderObjectDetails({
+                    risk_score: result.output.risk_score,
+                    confidence_level: result.output.confidence_level,
+                    needs_review: result.output.needs_review,
+                    escalation_level: result.output.escalation_level
+                }, 'Risk Assessment')}
+                
+                <Divider sx={{ my: 2 }} />
+                
+                {renderObjectDetails(result.output.search_methodology, 'Search Methodology')}
+
+              </CardContent>
+            </Card>
+          ))}
         </Box>
       </Box>
     );
@@ -194,4 +226,4 @@ export default function Listen() {
       </Typography>
     </Box>
   );
-} 
+}
