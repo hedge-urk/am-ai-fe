@@ -8,44 +8,6 @@ interface ReceivedData {
   timestamp: string;
 }
 
-const transformMainTable = (htmlContent: string): string => {
-  // This regex is designed to be non-greedy and find the top-level table
-  // that contains 'entity_summary'.
-  const mainTableRegex = /<table[^>]*>([\s\S]*?entity_summary[\s\S]*?)<\/table>/i;
-
-  return htmlContent.replace(mainTableRegex, (tableMatch) => {
-    // We've found the main table. Now process its rows.
-    const tableContent = tableMatch;
-    let newContent = '';
-
-    // Regex to find all direct rows of the current table.
-    // We use a pattern to avoid matching rows from nested tables.
-    const rowRegex = /<tr[^>]*>((?:<td[^>]*>[\s\S]*?<\/td>\s*){2})<\/tr>/gi;
-
-    let rowMatch;
-    while ((rowMatch = rowRegex.exec(tableContent)) !== null) {
-      const rowContent = rowMatch[1];
-      const cellRegex = /<td[^>]*>([\s\S]*?)<\/td>/gi;
-      
-      const firstCellMatch = cellRegex.exec(rowContent);
-      const secondCellMatch = cellRegex.exec(rowContent);
-
-      if (firstCellMatch && secondCellMatch) {
-        const heading = firstCellMatch[1].trim();
-        const content = secondCellMatch[1].trim();
-
-        // Make the heading more prominent
-        newContent += `<h4 style="margin-top: 20px; font-weight: 600;">${heading}</h4>`;
-        newContent += `<div>${content}</div>`;
-      }
-    }
-    
-    // If we successfully transformed rows, return the new content.
-    // Otherwise, something was wrong with the structure, so return the original table.
-    return newContent || tableMatch;
-  });
-};
-
 export default function Listen() {
   const [data, setData] = useState<ReceivedData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -208,7 +170,7 @@ export default function Listen() {
                   </Typography>
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: transformMainTable(section.content).replace(/<table/g, '<table class="modern-table"'),
+                      __html: section.content.replace(/<table/g, '<table class="modern-table"'),
                     }}
                   />
                 </CardContent>
