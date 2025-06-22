@@ -114,7 +114,7 @@ export default function Listen() {
       .filter((item): item is ScreeningResult => item !== null);
 
     const modelProviders = ['OpenAI', 'DeepSeek', "LLAMA"];
-      
+
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4, px: 2, fontFamily: 'Raleway, Arial, sans-serif', background: '#fff', minHeight: '100vh' }}>
         {/* Header */}
@@ -170,10 +170,10 @@ export default function Listen() {
               console.warn('Missing output in result:', result);
               return null;
             }
-            
+
             const { output } = result;
             const entityName = output.entity_summary?.name || 'Unknown Entity';
-            
+
             return (
               <Card key={idx} sx={{ mb: 3, borderRadius: 3, boxShadow: 1, background: '#fff', border: '1px solid #222' }}>
                 <CardContent>
@@ -185,16 +185,16 @@ export default function Listen() {
                   {output.entity_summary && renderObjectDetails(output.entity_summary, 'Entity Summary')}
 
                   <Divider sx={{ my: 2 }} />
-                  
+
                   {renderObjectDetails({
-                      risk_score: output.risk_score || 'N/A',
-                      confidence_level: output.confidence_level || 'N/A',
-                      needs_review: output.needs_review || 'N/A',
-                      escalation_level: output.escalation_level || 'N/A'
+                    risk_score: output.risk_score ?? 'N/A',
+                    confidence_level: output.confidence_level ?? 'N/A',
+                    needs_review: output.needs_review ?? 'N/A',
+                    escalation_level: output.escalation_level ?? 'N/A'
                   }, 'Risk Assessment')}
-                  
+
                   <Divider sx={{ my: 2 }} />
-                  
+
                   {output.search_methodology && renderObjectDetails(output.search_methodology, 'Search Methodology')}
 
                   <Divider sx={{ my: 2 }} />
@@ -206,7 +206,7 @@ export default function Listen() {
                         <Card key={matchIdx} variant="outlined" sx={{ mb: 2, background: '#fafafa' }}>
                           <CardContent>
                             {Object.entries(match).map(([key, value]) => (
-                               <Typography key={key} variant="body2" sx={{ mb: 0.5 }}>
+                              <Typography key={key} variant="body2" sx={{ mb: 0.5 }}>
                                 <strong style={{ textTransform: 'capitalize' }}>{key.replace(/_/g, ' ')}:</strong>{' '}
                                 {key === 'source_link' ? (
                                   <Link href={String(value)} target="_blank" rel="noopener noreferrer">{value}</Link>
