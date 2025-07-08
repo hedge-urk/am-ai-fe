@@ -67,7 +67,7 @@ export default function Listen() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  const { id } = router.query;
+  const { id, model } = router.query;
 
   const clearData = async () => {
     if (!id) return;
@@ -191,9 +191,14 @@ export default function Listen() {
           >
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <CheckCircleIcon sx={{ color: '#222', fontSize: 36, mr: 2 }} />
-              <Typography variant="h5" sx={{ color: '#111', fontWeight: 700, fontFamily: 'Raleway, Arial, sans-serif' }}>
+              <Typography variant="h5" sx={{ color: '#111', fontWeight: 700, fontFamily: 'Raleway, Arial, sans-serif', mr: 2 }}>
                 Screening Results Received!
               </Typography>
+              {model && (
+                <Typography variant="subtitle1" sx={{ color: '#555', fontWeight: 500, fontFamily: 'Raleway, Arial, sans-serif', ml: 2 }}>
+                  Model: {model}
+                </Typography>
+              )}
             </Box>
             <Button
               variant="outlined"

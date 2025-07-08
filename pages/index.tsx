@@ -83,8 +83,8 @@ export default function Home() {
         throw new Error('Failed to submit form');
       }
 
-      // Navigate to the listen page with the request ID
-      router.push(`/listen/${requestId}`);
+      // Navigate to the listen page with the request ID and model provider
+      router.push(`/listen/${requestId}?model=${encodeURIComponent(formData.modelProvider)}`);
     } catch (error) {
       console.error('Error submitting form:', error);
       setErrors({ entityName: 'Failed to submit form. Please try again.' });
