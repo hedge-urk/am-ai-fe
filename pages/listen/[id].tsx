@@ -160,20 +160,12 @@ export default function Listen() {
   }
 
   if (data && data.html) {
-    const results: ScreeningResult[] = data.html
-      .trim()
-      .split('\n')
-      .map(line => {
-        try {
-          return JSON.parse(line);
-        } catch (e) {
-          console.error('Failed to parse JSON line:', line, e);
-          return null;
-        }
-      })
-      .filter((item): item is ScreeningResult => item !== null);
-
-    const modelProviders = ['OpenAI', 'DeepSeek', "LLAMA"];
+    let parsedResult: any = null;
+    try {
+      parsedResult = JSON.parse(data.html);
+    } catch (e) {
+      console.error('Failed to parse JSON:', data.html, e);
+    }
 
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4, px: 2, fontFamily: 'Raleway, Arial, sans-serif', background: '#fff', minHeight: '100vh' }}>
@@ -224,100 +216,30 @@ export default function Listen() {
 
         {/* Results */}
         <Box sx={{ width: '100%', maxWidth: '95%', mt: 2 }}>
-          {results.map((result, idx) => {
-            // Add defensive checks for data structure
-            if (!result?.output) {
-              console.warn('Missing output in result:', result);
-              return null;
-            }
-
-            const { output } = result;
-            const entityName = output.entity_summary?.name || 'Unknown Entity';
-
-            return (
-              <Card
-                key={idx}
-                sx={{
-                  mb: 3,
-                  borderRadius: 3,
-                  boxShadow: '0 2px 8px 0 rgba(0,0,0,0.06)',
-                  border: '1px solid #222',
-                  background: '#fff',
-                }}
-              >
-                <CardContent sx={{ p: 3 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#111' }}>
-                    {entityName}
+          {parsedResult ? (
+            <Card
+              sx={{
+                mb: 3,
+                borderRadius: 3,
+                boxShadow: '0 2px 8px 0 rgba(0,0,0,0.06)',
+                border: '1px solid #222',
+                background: '#fff',
+              }}
+            >
+              <CardContent sx={{ p: 3 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#111' }}>
+                  Result
+                </Typography>
+                {Object.entries(parsedResult).map(([key, value]) => (
+                  <Typography key={key} variant="body2" sx={{ mb: 1 }}>
+                    <strong style={{ textTransform: 'capitalize' }}>{key.replace(/_/g, ' ')}:</strong> {typeof value === 'object' ? JSON.stringify(value) : String(value)}
                   </Typography>
-
-                  {/* Entity Summary */}
-                  {output.entity_summary && renderObjectDetails(output.entity_summary, 'Entity Summary')}
-
-                  {/* Risk Score and Confidence */}
-                  <Box sx={{ mb: 3 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>Risk Assessment</Typography>
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                      <strong>Risk Score:</strong> {output.risk_score}
-                    </Typography>
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                      <strong>Confidence Level:</strong> {output.confidence_level}
-                    </Typography>
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                      <strong>Needs Review:</strong> {output.needs_review ? 'Yes' : 'No'}
-                    </Typography>
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                      <strong>Escalation Level:</strong> {output.escalation_level}
-                    </Typography>
-                  </Box>
-
-                  {/* Matches */}
-                  {output.matches && output.matches.length > 0 && (
-                    <Box sx={{ mb: 3 }}>
-                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-                        Matches Found ({output.matches.length})
-                      </Typography>
-                      {output.matches.map((match, matchIdx) => (
-                        <Card
-                          key={matchIdx}
-                          sx={{
-                            mb: 2,
-                            p: 2,
-                            borderRadius: 2,
-                            border: '1px solid #e0e0e0',
-                            background: '#fafafa',
-                          }}
-                        >
-                          <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
-                            {match.risk_type} - {match.severity}
-                          </Typography>
-                          <Typography variant="body2" sx={{ mb: 1 }}>
-                            <strong>Source:</strong> {match.source} (Tier: {match.source_tier})
-                          </Typography>
-                          <Typography variant="body2" sx={{ mb: 1 }}>
-                            <strong>Date:</strong> {match.date}
-                          </Typography>
-                          <Typography variant="body2" sx={{ mb: 1 }}>
-                            <strong>Summary:</strong> {match.summary}
-                          </Typography>
-                          {match.source_link && (
-                            <Link href={match.source_link} target="_blank" rel="noopener noreferrer">
-                              View Source
-                            </Link>
-                          )}
-                          <Typography variant="body2" sx={{ mt: 1, fontStyle: 'italic' }}>
-                            <strong>Entity Confirmation:</strong> {match.entity_confirmation}
-                          </Typography>
-                        </Card>
-                      ))}
-                    </Box>
-                  )}
-
-                  {/* Search Methodology */}
-                  {output.search_methodology && renderObjectDetails(output.search_methodology, 'Search Methodology')}
-                </CardContent>
-              </Card>
-            );
-          })}
+                ))}
+              </CardContent>
+            </Card>
+          ) : (
+            <Typography color="error">Failed to parse result data.</Typography>
+          )}
         </Box>
       </Box>
     );
