@@ -126,7 +126,7 @@ export default function Home() {
         fontFamily: 'Raleway, Arial, sans-serif',
       }}
     >
-      <Container maxWidth={false} sx={{ maxWidth: 400 }}>
+      <Container maxWidth={false} sx={{ maxWidth: 600 }}>
         <Paper
           elevation={1}
           sx={{
