@@ -194,11 +194,7 @@ export default function Home() {
                   name="modelProvider"
                   value={formData.modelProvider}
                   onChange={handleChange}
-                  startAdornment={
-                    <InputAdornment position="start">
-                      <SmartToyIcon sx={{ color: '#111' }} />
-                    </InputAdornment>
-                  }
+                  label="Model Provider"
                   sx={{
                     color: '#111',
                     fontFamily: 'Raleway, Arial, sans-serif',
@@ -212,9 +208,16 @@ export default function Home() {
                       borderColor: '#111',
                     },
                   }}
+                  renderValue={(selected) => (
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <SmartToyIcon sx={{ color: '#111', mr: 1 }} />
+                      <span>{typeof selected === 'string' ? selected : ''}</span>
+                    </Box>
+                  )}
                 >
                   {modelProviders.map((provider) => (
-                    <MenuItem key={provider} value={provider} style={{ fontFamily: 'Raleway, Arial, sans-serif' }}>
+                    <MenuItem key={provider} value={provider} style={{ fontFamily: 'Raleway, Arial, sans-serif', display: 'flex', alignItems: 'center' }}>
+                      <SmartToyIcon sx={{ color: '#111', mr: 1 }} />
                       {provider}
                     </MenuItem>
                   ))}
