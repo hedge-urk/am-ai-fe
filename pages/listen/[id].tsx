@@ -222,13 +222,6 @@ export default function Listen() {
           </Button>
         </Box>
 
-        {/* Request ID Display */}
-        <Box sx={{ width: '100%', maxWidth: '95%', mb: 2 }}>
-          <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center' }}>
-            Request ID: {id}
-          </Typography>
-        </Box>
-
         {/* Results */}
         <Box sx={{ width: '100%', maxWidth: '95%', mt: 2 }}>
           {results.map((result, idx) => {

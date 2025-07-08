@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { Box, Button, TextField, Typography, Paper, Container, InputAdornment } from '@mui/material';
+import { Box, Button, TextField, Typography, Paper, Container, InputAdornment, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import PublicIcon from '@mui/icons-material/Public';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
 import { useRouter } from 'next/router';
 
 interface FormData {
   entityName: string;
   dateOfBirth: string;
   country: string;
+  modelProvider: string;
 }
 
 export default function Home() {
@@ -16,10 +18,13 @@ export default function Home() {
   const [formData, setFormData] = useState<FormData>({
     entityName: '',
     dateOfBirth: '',
-    country: ''
+    country: '',
+    modelProvider: 'OpenAI'
   });
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const modelProviders = ['OpenAI', 'DeepSeek', 'LLAMA'];
 
   const validateForm = () => {
     const newErrors: Partial<FormData> = {};
@@ -42,7 +47,27 @@ export default function Home() {
       // Create the dynamic callback URL
       const callbackUrl = `${window.location.origin}/api/listen/${requestId}`;
       
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}`, {
+      // Select the appropriate API endpoint based on the model provider
+      let apiEndpoint: string;
+      switch (formData.modelProvider) {
+        case 'OpenAI':
+          apiEndpoint = process.env.NEXT_PUBLIC_API_ENDPOINT_OPENAI || '';
+          break;
+        case 'DeepSeek':
+          apiEndpoint = process.env.NEXT_PUBLIC_API_ENDPOINT_DEEPSEEK || '';
+          break;
+        case 'LLAMA':
+          apiEndpoint = process.env.NEXT_PUBLIC_API_ENDPOINT_LLAMA || '';
+          break;
+        default:
+          throw new Error('Invalid model provider selected');
+      }
+
+      if (!apiEndpoint) {
+        throw new Error(`API endpoint not configured for ${formData.modelProvider}`);
+      }
+      
+      const response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,16 +93,16 @@ export default function Home() {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | { target: { name?: string; value: unknown } }) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name as string]: value
     }));
     if (errors[name as keyof FormData]) {
       setErrors(prev => ({
         ...prev,
-        [name]: undefined
+        [name as string]: undefined
       }));
     }
   };
@@ -161,6 +186,40 @@ export default function Home() {
                 }}
                 InputLabelProps={{ style: { color: '#111', fontFamily: 'Raleway, Arial, sans-serif' } }}
               />
+              <FormControl fullWidth>
+                <InputLabel style={{ color: '#111', fontFamily: 'Raleway, Arial, sans-serif' }}>
+                  Model Provider
+                </InputLabel>
+                <Select
+                  name="modelProvider"
+                  value={formData.modelProvider}
+                  onChange={handleChange}
+                  startAdornment={
+                    <InputAdornment position="start">
+                      <SmartToyIcon sx={{ color: '#111' }} />
+                    </InputAdornment>
+                  }
+                  sx={{
+                    color: '#111',
+                    fontFamily: 'Raleway, Arial, sans-serif',
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#222',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#111',
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#111',
+                    },
+                  }}
+                >
+                  {modelProviders.map((provider) => (
+                    <MenuItem key={provider} value={provider} style={{ fontFamily: 'Raleway, Arial, sans-serif' }}>
+                      {provider}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
               <Button
                 type="submit"
                 variant="outlined"
