@@ -167,6 +167,47 @@ export default function Listen() {
       console.error('Failed to parse JSON:', data.html, e);
     }
 
+    // Helper to render a list of results
+    const renderResults = (results: any[]) => (
+      <Box sx={{ mt: 2 }}>
+        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>Results:</Typography>
+        {results.length === 0 ? (
+          <Typography variant="body2" sx={{ mb: 1, fontStyle: 'italic' }}>No results found.</Typography>
+        ) : (
+          results.map((item, idx) => (
+            <Card key={idx} sx={{ mb: 2, p: 2, borderRadius: 2, border: '1px solid #e0e0e0', background: '#fafafa' }}>
+              {item.title && (
+                <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>{item.title}</Typography>
+              )}
+              {item.url && (
+                <Typography variant="body2" sx={{ mb: 1 }}>
+                  <strong>URL:</strong> <Link href={item.url} target="_blank" rel="noopener noreferrer">{item.url}</Link>
+                </Typography>
+              )}
+              {item.content && (
+                <Typography variant="body2" sx={{ mb: 1 }}>
+                  <strong>Content:</strong> {item.content}
+                </Typography>
+              )}
+              {item.score !== undefined && (
+                <Typography variant="body2" sx={{ mb: 1 }}>
+                  <strong>Score:</strong> {item.score}
+                </Typography>
+              )}
+              {/* Render any other fields generically */}
+              {Object.entries(item).map(([key, value]) => (
+                !['title', 'url', 'content', 'score'].includes(key) && value !== null && value !== undefined ? (
+                  <Typography key={key} variant="body2" sx={{ mb: 1 }}>
+                    <strong>{key.replace(/_/g, ' ')}:</strong> {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                  </Typography>
+                ) : null
+              ))}
+            </Card>
+          ))
+        )}
+      </Box>
+    );
+
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4, px: 2, fontFamily: 'Raleway, Arial, sans-serif', background: '#fff', minHeight: '100vh' }}>
         {/* Header */}
@@ -216,30 +257,34 @@ export default function Listen() {
 
         {/* Results */}
         <Box sx={{ width: '100%', maxWidth: '95%', mt: 2 }}>
-          {parsedResult ? (
-            <Card
-              sx={{
-                mb: 3,
-                borderRadius: 3,
-                boxShadow: '0 2px 8px 0 rgba(0,0,0,0.06)',
-                border: '1px solid #222',
-                background: '#fff',
-              }}
-            >
-              <CardContent sx={{ p: 3 }}>
-                <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#111' }}>
-                  Result
-                </Typography>
-                {Object.entries(parsedResult).map(([key, value]) => (
-                  <Typography key={key} variant="body2" sx={{ mb: 1 }}>
-                    <strong style={{ textTransform: 'capitalize' }}>{key.replace(/_/g, ' ')}:</strong> {typeof value === 'object' ? JSON.stringify(value) : String(value)}
-                  </Typography>
-                ))}
-              </CardContent>
-            </Card>
-          ) : (
-            <Typography color="error">Failed to parse result data.</Typography>
-          )}
+          <Card
+            sx={{
+              mb: 3,
+              borderRadius: 3,
+              boxShadow: '0 2px 8px 0 rgba(0,0,0,0.06)',
+              border: '1px solid #222',
+              background: '#fff',
+            }}
+          >
+            <CardContent sx={{ p: 3 }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#111' }}>
+                Result
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                <strong>Query:</strong> {parsedResult?.query || <span style={{ fontStyle: 'italic' }}>N/A</span>}
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                <strong>Follow Up Questions:</strong> {parsedResult?.follow_up_questions ? String(parsedResult.follow_up_questions) : <span style={{ fontStyle: 'italic' }}>None</span>}
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                <strong>Answer:</strong> {parsedResult?.answer ? String(parsedResult.answer) : <span style={{ fontStyle: 'italic' }}>None</span>}
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                <strong>Images:</strong> {Array.isArray(parsedResult?.images) && parsedResult.images.length > 0 ? parsedResult.images.join(', ') : <span style={{ fontStyle: 'italic' }}>None</span>}
+              </Typography>
+              {Array.isArray(parsedResult?.results) && renderResults(parsedResult.results)}
+            </CardContent>
+          </Card>
         </Box>
       </Box>
     );
