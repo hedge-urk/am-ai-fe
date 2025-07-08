@@ -36,19 +36,30 @@ export default function Home() {
 
     setIsSubmitting(true);
     try {
+      // Generate a unique ID for this request
+      const requestId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+      
+      // Create the dynamic callback URL
+      const callbackUrl = `${window.location.origin}/api/listen/${requestId}`;
+      
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          callbackUrl: callbackUrl,
+          requestId: requestId
+        }),
       });
 
       if (!response.ok) {
         throw new Error('Failed to submit form');
       }
 
-      router.push('/listen');
+      // Navigate to the listen page with the request ID
+      router.push(`/listen/${requestId}`);
     } catch (error) {
       console.error('Error submitting form:', error);
       setErrors({ entityName: 'Failed to submit form. Please try again.' });

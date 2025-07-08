@@ -1,7 +1,7 @@
 import { IncomingForm } from 'formidable';
 
-// Store received data in memory
-let receivedData = null;
+// Store received data in memory with ID-based keys
+const dataStore = new Map();
 
 export const config = {
     api: {
@@ -20,6 +20,12 @@ const parseForm = async (req) => {
 };
 
 export default async function handler(req, res) {
+    const { id } = req.query;
+    
+    if (!id) {
+        return res.status(400).json({ success: false, error: 'ID parameter is required' });
+    }
+
     // Set CORS headers
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -40,33 +46,34 @@ export default async function handler(req, res) {
             const { fields } = await parseForm(req);
             const htmlContent = fields.html || '';
 
-            // Store the received data
-            receivedData = {
+            // Store the received data with the specific ID
+            dataStore.set(id, {
                 html: htmlContent,
                 timestamp: new Date().toISOString()
-            };
+            });
 
-            console.log('Received data:', receivedData);
-            res.status(200).json({ success: true, message: 'Data received successfully' });
+            console.log(`Received data for ID ${id}:`, dataStore.get(id));
+            res.status(200).json({ success: true, message: 'Data received successfully', id });
         } catch (error) {
             console.error('Error processing POST request:', error);
             res.status(500).json({ success: false, error: 'Internal server error' });
         }
     } else if (req.method === 'GET') {
         try {
+            const receivedData = dataStore.get(id);
             if (!receivedData) {
-                res.status(200).json({ success: true, data: null });
+                res.status(200).json({ success: true, data: null, id });
                 return;
             }
 
-            res.status(200).json({ success: true, data: receivedData });
+            res.status(200).json({ success: true, data: receivedData, id });
         } catch (error) {
             console.error('Error processing GET request:', error);
             res.status(500).json({ success: false, error: 'Internal server error' });
         }
     } else if (req.method === 'DELETE') {
-        receivedData = null;
-        res.status(200).json({ success: true, message: 'Data cleared' });
+        dataStore.delete(id);
+        res.status(200).json({ success: true, message: 'Data cleared', id });
     } else {
         res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
         res.status(405).end(`Method ${req.method} Not Allowed`);
