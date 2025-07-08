@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, TextField, Typography, Paper, Container, InputAdornment, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Box, Button, TextField, Typography, Paper, Container, InputAdornment, Select, MenuItem, FormControl, InputLabel, Tooltip } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import PublicIcon from '@mui/icons-material/Public';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
@@ -11,6 +11,7 @@ interface FormData {
   dateOfBirth: string;
   country: string;
   modelProvider: string;
+  similarityScore: number;
 }
 
 export default function Home() {
@@ -19,7 +20,8 @@ export default function Home() {
     entityName: '',
     dateOfBirth: '',
     country: '',
-    modelProvider: 'OpenAI'
+    modelProvider: 'OpenAI',
+    similarityScore: 80,
   });
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -83,8 +85,14 @@ export default function Home() {
         throw new Error('Failed to submit form');
       }
 
-      // Navigate to the listen page with the request ID and model provider
-      router.push(`/listen/${requestId}?model=${encodeURIComponent(formData.modelProvider)}`);
+      // Navigate to the listen page with the request ID and all search parameters
+      const params = new URLSearchParams({
+        model: formData.modelProvider,
+        similarityScore: String(formData.similarityScore),
+        country: formData.country,
+        dateOfBirth: formData.dateOfBirth,
+      });
+      router.push(`/listen/${requestId}?${params.toString()}`);
     } catch (error) {
       console.error('Error submitting form:', error);
       setErrors({ entityName: 'Failed to submit form. Please try again.' });
@@ -97,7 +105,7 @@ export default function Home() {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name as string]: value
+      [name as string]: name === 'similarityScore' ? Math.max(0, Math.min(100, Number(value))) : value
     }));
     if (errors[name as keyof FormData]) {
       setErrors(prev => ({
@@ -153,6 +161,22 @@ export default function Home() {
                 }}
                 InputLabelProps={{ style: { color: '#111', fontFamily: 'Raleway, Arial, sans-serif' } }}
               />
+              <Tooltip title="A percentage value (0-100) of how closely the name must match. Higher means stricter matching." placement="top" arrow>
+                <TextField
+                  fullWidth
+                  type="number"
+                  label="Similarity Score (%)"
+                  name="similarityScore"
+                  value={formData.similarityScore}
+                  onChange={handleChange}
+                  inputProps={{ min: 0, max: 100 }}
+                  sx={{
+                    '& input': { color: '#111', fontFamily: 'Raleway, Arial, sans-serif' },
+                  }}
+                  InputLabelProps={{ style: { color: '#111', fontFamily: 'Raleway, Arial, sans-serif' } }}
+                  helperText="How close the name must match (0-100%)"
+                />
+              </Tooltip>
               <TextField
                 fullWidth
                 label="Date of Birth"

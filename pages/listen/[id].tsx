@@ -67,7 +67,7 @@ export default function Listen() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  const { id, model } = router.query;
+  const { id, model, similarityScore, country, dateOfBirth } = router.query;
 
   const clearData = async () => {
     if (!id) return;
@@ -194,11 +194,6 @@ export default function Listen() {
               <Typography variant="h5" sx={{ color: '#111', fontWeight: 700, fontFamily: 'Raleway, Arial, sans-serif', mr: 2 }}>
                 Screening Results Received!
               </Typography>
-              {model && (
-                <Typography variant="subtitle1" sx={{ color: '#555', fontWeight: 500, fontFamily: 'Raleway, Arial, sans-serif', ml: 2 }}>
-                  Model: {model}
-                </Typography>
-              )}
             </Box>
             <Button
               variant="outlined"
@@ -221,6 +216,27 @@ export default function Listen() {
               Search Again
             </Button>
           </Box>
+
+          {/* User Search Parameters Card */}
+          <Card sx={{ width: '100%', maxWidth: '95%', mb: 3, borderRadius: 3, background: '#f7f7f7', border: '1px solid #bbb' }}>
+            <CardContent>
+              <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1, color: '#333' }}>
+                Search Parameters
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 0.5 }}>
+                <strong>Model Provider:</strong> {model || <span style={{ fontStyle: 'italic' }}>N/A</span>}
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 0.5 }}>
+                <strong>Similarity Score:</strong> {similarityScore !== undefined ? similarityScore + '%' : <span style={{ fontStyle: 'italic' }}>N/A</span>}
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 0.5 }}>
+                <strong>Country:</strong> {country || <span style={{ fontStyle: 'italic' }}>N/A</span>}
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 0.5 }}>
+                <strong>Date of Birth:</strong> {dateOfBirth || <span style={{ fontStyle: 'italic' }}>N/A</span>}
+              </Typography>
+            </CardContent>
+          </Card>
 
           {/* Results */}
           <Box sx={{ width: '100%', maxWidth: '95%', mt: 2 }}>
