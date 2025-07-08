@@ -118,6 +118,7 @@ export default function Home() {
   return (
     <Box
       sx={{
+        minHeight: '100vh',
         background: '#fff',
         display: 'flex',
         alignItems: 'center',
