@@ -21,7 +21,7 @@ export default function Home() {
     dateOfBirth: '',
     country: '',
     modelProvider: 'OpenAI',
-    similarityScore: 80,
+    similarityScore: 20,
   });
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -118,7 +118,6 @@ export default function Home() {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
         background: '#fff',
         display: 'flex',
         alignItems: 'center',
@@ -158,9 +157,10 @@ export default function Home() {
                       <PersonIcon sx={{ color: '#111' }} />
                     </InputAdornment>
                   ),
-                  style: { color: '#111', fontFamily: 'Raleway, Arial, sans-serif', fontSize: '1rem', padding: '6px 8px' },
+                  style: { color: '#111', fontFamily: 'Raleway, Arial, sans-serif', fontSize: '1rem', height: 44, padding: '6px 8px' },
                 }}
                 InputLabelProps={{ style: { color: '#111', fontFamily: 'Raleway, Arial, sans-serif', fontSize: '1rem' } }}
+                sx={{ '& .MuiInputBase-root': { height: 44 } }}
               />
               <Tooltip title="A percentage value (0-100) of how closely the name must match. Higher means stricter matching." placement="top" arrow>
                 <TextField
@@ -171,8 +171,8 @@ export default function Home() {
                   name="similarityScore"
                   value={formData.similarityScore}
                   onChange={handleChange}
-                  inputProps={{ min: 0, max: 100 }}
-                  sx={{ '& input': { color: '#111', fontFamily: 'Raleway, Arial, sans-serif', fontSize: '1rem', padding: '6px 8px' } }}
+                  inputProps={{ min: 0, max: 100, style: { height: 44 } }}
+                  sx={{ '& input': { color: '#111', fontFamily: 'Raleway, Arial, sans-serif', fontSize: '1rem', height: 44, padding: '6px 8px' }, '& .MuiInputBase-root': { height: 44 } }}
                   InputLabelProps={{ style: { color: '#111', fontFamily: 'Raleway, Arial, sans-serif', fontSize: '1rem' } }}
                   helperText="How close the name must match (0-100%)"
                 />
@@ -192,8 +192,9 @@ export default function Home() {
                       <CalendarTodayIcon sx={{ color: '#111' }} />
                     </InputAdornment>
                   ),
-                  style: { color: '#111', fontFamily: 'Raleway, Arial, sans-serif', fontSize: '1rem', padding: '6px 8px' },
+                  style: { color: '#111', fontFamily: 'Raleway, Arial, sans-serif', fontSize: '1rem', height: 44, padding: '6px 8px' },
                 }}
+                sx={{ '& .MuiInputBase-root': { height: 44 } }}
               />
               <TextField
                 fullWidth
@@ -208,11 +209,12 @@ export default function Home() {
                       <PublicIcon sx={{ color: '#111' }} />
                     </InputAdornment>
                   ),
-                  style: { color: '#111', fontFamily: 'Raleway, Arial, sans-serif', fontSize: '1rem', padding: '6px 8px' },
+                  style: { color: '#111', fontFamily: 'Raleway, Arial, sans-serif', fontSize: '1rem', height: 44, padding: '6px 8px' },
                 }}
                 InputLabelProps={{ style: { color: '#111', fontFamily: 'Raleway, Arial, sans-serif', fontSize: '1rem' } }}
+                sx={{ '& .MuiInputBase-root': { height: 44 } }}
               />
-              <FormControl fullWidth size="small">
+              <FormControl fullWidth size="small" sx={{ '& .MuiInputBase-root': { height: 44 } }}>
                 <InputLabel style={{ color: '#111', fontFamily: 'Raleway, Arial, sans-serif', fontSize: '1rem' }}>
                   Model Provider
                 </InputLabel>
@@ -225,6 +227,7 @@ export default function Home() {
                     color: '#111',
                     fontFamily: 'Raleway, Arial, sans-serif',
                     fontSize: '1rem',
+                    height: 44,
                     '& .MuiOutlinedInput-notchedOutline': {
                       borderColor: '#222',
                     },
@@ -243,7 +246,7 @@ export default function Home() {
                   )}
                 >
                   {modelProviders.map((provider) => (
-                    <MenuItem key={provider} value={provider} style={{ fontFamily: 'Raleway, Arial, sans-serif', display: 'flex', alignItems: 'center', fontSize: '1rem' }}>
+                    <MenuItem key={provider} value={provider} style={{ fontFamily: 'Raleway, Arial, sans-serif', display: 'flex', alignItems: 'center', fontSize: '1rem', height: 44 }}>
                       <SmartToyIcon sx={{ color: '#111', mr: 1 }} />
                       {provider}
                     </MenuItem>
