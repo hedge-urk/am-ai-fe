@@ -20,13 +20,13 @@ export default function Home() {
     entityName: '',
     dateOfBirth: '',
     country: '',
-    modelProvider: 'OpenAI',
-    similarityScore: 20,
+    modelProvider: 'DeepSeek',
+    similarityScore: 70,
   });
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const modelProviders = ['OpenAI', 'DeepSeek', 'LLAMA'];
+  const modelProviders = ['DeepSeek', 'LLAMA', 'OpenAI'];
 
   const validateForm = () => {
     const newErrors: Partial<FormData> = {};
